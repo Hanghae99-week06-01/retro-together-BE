@@ -1,13 +1,13 @@
-package com.onetier.retro_togather;
+package com.onetier.retro_together;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RetroTogatherApplicationTests {
+class RetroTogetherApplicationTests {
 
-    @Test
-    void contextLoads() {
-    }
+	@Test
+	void contextLoads() {
+	}
 
 }
