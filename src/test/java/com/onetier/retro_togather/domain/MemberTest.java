@@ -1,6 +1,6 @@
 package com.onetier.retro_togather.domain;
 
-import com.onetier.retro_togather.controller.request.MemberRequestDto;
+import com.onetier.retro_together.controller.request.MemberRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
