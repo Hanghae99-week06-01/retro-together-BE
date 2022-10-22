@@ -42,11 +42,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: puri12/retro-together:latest
+      - name: web docker build and push
+        run: |
+          docker build -t puri12/retro-together .
+          docker push puri12/retro-together
 
         ## 4) Docker Hub에 Push한 이미지를 리눅스 서버에 받아와서 run
       - name: Deploy
