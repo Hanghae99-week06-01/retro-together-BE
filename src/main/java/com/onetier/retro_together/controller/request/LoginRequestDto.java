@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 public class LoginRequestDto {
 
     @NotBlank
-    private String email;
+    private String emailId;
 
     @NotBlank
     private String password;

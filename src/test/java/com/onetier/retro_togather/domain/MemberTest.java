@@ -10,12 +10,12 @@ class MemberTest {
     String nickname = "doosan";
     String password = "1";
     String passwordConfirm = "1q2w3e4r!!";
-    String email = "doosan0425@gmail.com";
+    String emailId = "doosan0425@gmail.com";
     MemberRequestDto requestDto = new MemberRequestDto(
             nickname,
             password,
             passwordConfirm,
-            email
+            emailId
     );
 
     @Test
@@ -23,6 +23,10 @@ class MemberTest {
     void testEquals() {
     }
 
+    @Test
+    void isPresentMember() {
+//        if(requestDto.getEmail() == )
+    }
     @Test
     void validatePassword() {
         if(id == null || id <=0) {
@@ -32,7 +36,7 @@ class MemberTest {
 
     @Test
     void getId() {
-        if(requestDto.getEmail() == null || requestDto.getEmail().isEmpty()){
+        if(requestDto.getEmailId() == null || requestDto.getEmailId().isEmpty()){
             throw new IllegalArgumentException("입력한 이메일이 잘못되었습니다. 정확한 이메일을 사용해주세요.");
         }
     }
@@ -57,8 +61,8 @@ class MemberTest {
     }
 
     @Test
-    void getEmail() {
-        if(requestDto.getEmail() == null || requestDto.getEmail().isEmpty()){
+    void getEmailId() {
+        if(requestDto.getEmailId() == null || requestDto.getEmailId().isEmpty()){
             throw new IllegalArgumentException("저장할 수 있는 이메일이 없습니다.");
         }
     }
