@@ -17,6 +17,14 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      ## git ignore에 등록된 application.properties 파일 생성해주기
+      - name: make ENV
+        run: |
+          cd ./src/main/resources
+          touch ./application.properties
+          echo "${{ secrets.PROPERTIES }}" > ./application.properties
+        shell: bash
  
       # Gradle wrapper 파일 실행 권한주기
       - name: Grant execute permission for gradlew
