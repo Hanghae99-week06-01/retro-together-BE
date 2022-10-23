@@ -35,12 +35,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    //auth2
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-    //redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
     //queryDslVersion
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
