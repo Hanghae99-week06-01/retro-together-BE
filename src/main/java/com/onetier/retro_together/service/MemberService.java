@@ -40,7 +40,7 @@ public class MemberService {
         }
 
         Member member = Member.builder()
-                .nickname(requestDto.getEmailId())
+                .nickname(requestDto.getNickname())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .emailId(requestDto.getEmailId())
                 .build();

@@ -72,9 +72,7 @@ public class TokenProvider {
         .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
         .refreshToken(refreshToken)
         .build();
-
   }
-
 
   public Member getMemberFromAuthentication() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
