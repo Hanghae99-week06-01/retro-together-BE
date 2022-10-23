@@ -45,7 +45,6 @@ public class Member extends Timestamped {
         return id != null && Objects.equals(id, member.id);
     }
 
-
     @Override
     public int hashCode() {
         return getClass().hashCode();
@@ -61,5 +60,4 @@ public class Member extends Timestamped {
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
     }
-
 }
