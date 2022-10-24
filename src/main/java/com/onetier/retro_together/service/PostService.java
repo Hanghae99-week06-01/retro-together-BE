@@ -71,7 +71,7 @@ public class PostService {
         }
 
 
-        // AWS 추가 2022-10-23 오후 8시 8분
+//        // AWS 추가 2022-10-23 오후 8시 8분
         String FileName = null;
         if (multipartFile.isEmpty()) {
             return ResponseDto.fail("INVALID_FILE", "파일이 유효하지 않습니다.");
@@ -84,20 +84,31 @@ public class PostService {
             e.printStackTrace();
         }
 
-        List<Tag> tags = Arrays.stream(requestDto.getTags().split(" "))
-                .map(s ->
-                        Tag.builder()
-                                .tagName(s)
-                                .build()
-                ).toList();
-        tagRepository.saveAll(tags);
+        List<String> inputList =  Arrays.stream(requestDto.getTags().split(" ")).toList();
+        List<Tag> tagList = new ArrayList<>();
+        for (String tag : inputList) {
+            if (tagRepository.findByTagName(tag) != null) {
+                tagList.add(tagRepository.findByTagName(tag));
+            } else {
+                tagList.add(tagRepository.save(Tag.builder()
+                        .tagName(tag)
+                        .build()));
+            }
+        }
+
+//        List<Tag> tagList = Arrays.stream(requestDto.getTags().split(" "))
+//                .map(s ->
+//                    tagRepository.save(Tag.builder()
+//                                .tagName(s)
+//                                .build())
+//                ).toList();
 
         assert imageResponseDto != null;
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .image(imageResponseDto.getImageUrl())
-                .tags(tags)
+                .tags(tagList)
                 .member(member)
                 .build();
         postRepository.save(post);
@@ -128,6 +139,7 @@ public class PostService {
                             .id(post.getId())
                             .title(post.getTitle())
                             .author(post.getMember().getNickname())
+                            .tags(post.getTags())
                             .createdAt(post.getCreatedAt())
                             .modifiedAt(post.getModifiedAt())
                             .build()
@@ -187,6 +199,7 @@ public class PostService {
                         .title(post.getTitle())
                         .content(post.getContent())
                         .imageUrl(post.getImage())
+                        .tags(post.getTags())
                         .author(post.getMember().getNickname())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
