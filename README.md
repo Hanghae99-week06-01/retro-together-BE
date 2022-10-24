@@ -17,3 +17,8 @@
 
 <br>
 <h3 align="center"><b><a href="https://github.com/Hanghae99-week06-01/retro-together-BE/wiki/API-%EB%AA%85%EC%84%B8%EC%84%9C">⚙ API 명세서 ⚙</a></b></h3>
+
+---
+
+<br>
+<h3 align="center"><b><a href="https://github.com/orgs/Hanghae99-week06-01/projects/1"> 개발 진행상황 </a></b></h3>
