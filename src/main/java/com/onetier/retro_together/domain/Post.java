@@ -3,6 +3,7 @@ import com.onetier.retro_together.controller.request.PostRequestDto;
 import com.onetier.retro_together.controller.response.ImageResponseDto;
 import lombok.*;
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Post
@@ -30,6 +31,10 @@ public class Post extends Timestamped {
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    @JoinColumn(name = "tag_id", nullable = true)
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Tag> tags;
 
     /**
      * Update

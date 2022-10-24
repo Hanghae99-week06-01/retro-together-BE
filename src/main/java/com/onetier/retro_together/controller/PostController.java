@@ -4,6 +4,7 @@ import com.onetier.retro_together.controller.request.PostRequestDto;
 import com.onetier.retro_together.controller.response.ResponseDto;
 import com.onetier.retro_together.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +26,10 @@ public class PostController {
      * @return
      * @author doosan
      */
-    @RequestMapping(value="/api/auth/post", method = RequestMethod.POST)
-    public ResponseDto<?> createPost(@RequestPart PostRequestDto requestDto, @RequestPart MultipartFile multipartFile, HttpServletRequest request) {
+    @RequestMapping(value="/api/auth/post", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = "application/json")
+    public ResponseDto<?> createPost(@RequestPart(value = "requestDto") PostRequestDto requestDto,
+                                     @RequestPart(value = "file", required = false) MultipartFile multipartFile,
+                                     HttpServletRequest request) {
         return postService.createPost(requestDto, multipartFile, request);
     }
 

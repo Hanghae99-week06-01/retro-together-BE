@@ -8,6 +8,7 @@ import com.onetier.retro_together.controller.response.*;
 
 import com.onetier.retro_together.domain.Member;
 import com.onetier.retro_together.domain.Post;
+import com.onetier.retro_together.domain.Tag;
 import com.onetier.retro_together.jwt.TokenProvider;
 
 import com.onetier.retro_together.repository.*;
@@ -23,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +35,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final TagRepository tagRepository;
     private final TokenProvider tokenProvider;
     private final S3UploaderService s3UploaderService; // S3Uploader 관련 추가 2022- 10 - 23 오후 7시 34분
 
@@ -81,11 +84,20 @@ public class PostService {
             e.printStackTrace();
         }
 
+        List<Tag> tags = Arrays.stream(requestDto.getTags().split(" "))
+                .map(s ->
+                        Tag.builder()
+                                .tagName(s)
+                                .build()
+                ).toList();
+        tagRepository.saveAll(tags);
+
         assert imageResponseDto != null;
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .image(imageResponseDto.getImageUrl())
+                .tags(tags)
                 .member(member)
                 .build();
         postRepository.save(post);
@@ -97,6 +109,7 @@ public class PostService {
                         .content(post.getContent())
                         .author(post.getMember().getNickname())
                         .imageUrl(post.getImage())
+                        .tags(post.getTags())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .build()
