@@ -1,7 +1,7 @@
 package com.onetier.retro_together.service;
 
 
-import com.onetier.retro_together.controller.request.GetAllPostResponseDto;
+import com.onetier.retro_together.controller.response.GetAllPostResponseDto;
 import com.onetier.retro_together.controller.request.PostRequestDto;
 import com.onetier.retro_together.controller.response.*;
 

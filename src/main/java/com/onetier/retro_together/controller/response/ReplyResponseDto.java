@@ -1,4 +1,4 @@
-package com.onetier.retro_together.controller.request;
+package com.onetier.retro_together.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * GetAllPostResponseDto 추가 2022 - 10 - 23 오후 8시 30분
+ * ReplyResponseDto 2022-10-24 오후 1시 54분 추가
  */
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetAllPostResponseDto {
+public class ReplyResponseDto {
     private Long id;
-    private String title;
+    private Long parentId;
     private String author;
+    private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-
 }
