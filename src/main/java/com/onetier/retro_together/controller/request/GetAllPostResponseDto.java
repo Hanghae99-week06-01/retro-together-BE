@@ -20,7 +20,7 @@ public class GetAllPostResponseDto {
     private Long id;
     private String title;
     private String author;
-    private List<Tag> tags;
+    private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 

@@ -1,4 +1,5 @@
 package com.onetier.retro_together.controller.response;
+import com.onetier.retro_together.domain.Post_Tag;
 import com.onetier.retro_together.domain.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class PostResponseDto {
     private String content;
     private String title;
     private String imageUrl;
-    private List<Tag> tags;
+    private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

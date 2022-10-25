@@ -8,6 +8,7 @@ import com.onetier.retro_together.controller.response.*;
 
 import com.onetier.retro_together.domain.Member;
 import com.onetier.retro_together.domain.Post;
+import com.onetier.retro_together.domain.Post_Tag;
 import com.onetier.retro_together.domain.Tag;
 import com.onetier.retro_together.jwt.TokenProvider;
 
@@ -36,6 +37,7 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final Post_TagRepository post_tagRepository;
     private final TokenProvider tokenProvider;
     private final S3UploaderService s3UploaderService; // S3Uploader 관련 추가 2022- 10 - 23 오후 7시 34분
 
@@ -84,34 +86,43 @@ public class PostService {
             e.printStackTrace();
         }
 
-        List<String> inputList =  Arrays.stream(requestDto.getTags().split(" ")).toList();
+        List<String> inputTag = Arrays.stream(requestDto.getTags().split(" ")).toList();
         List<Tag> tagList = new ArrayList<>();
-        for (String tag : inputList) {
-            if (tagRepository.findByTagName(tag) != null) {
-                tagList.add(tagRepository.findByTagName(tag));
+        List<Post_Tag> post_tagList = new ArrayList<>();
+        for (String tag : inputTag) {
+            Optional<Tag> originTag = Optional.ofNullable(tagRepository.findByTagName(tag));
+            if (originTag.isPresent()) {
+                tagList.add(originTag.get());
             } else {
-                tagList.add(tagRepository.save(Tag.builder()
+                Tag newTag = Tag.builder()
                         .tagName(tag)
-                        .build()));
+                        .build();
+                tagRepository.save(newTag);
+                tagList.add(newTag);
             }
+            Post_Tag post_tag = Post_Tag.builder()
+                    .post(null)
+                    .tag(tagList.get(tagList.size() - 1))
+                    .build();
+            post_tagRepository.save(post_tag);
+            post_tagList.add(post_tag);
         }
-
-//        List<Tag> tagList = Arrays.stream(requestDto.getTags().split(" "))
-//                .map(s ->
-//                    tagRepository.save(Tag.builder()
-//                                .tagName(s)
-//                                .build())
-//                ).toList();
 
         assert imageResponseDto != null;
         Post post = Post.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .image(imageResponseDto.getImageUrl())
-                .tags(tagList)
+                .image("imageResponseDto.getImageUrl()")
+                .post_tagList(post_tagList)
                 .member(member)
                 .build();
         postRepository.save(post);
+
+        // Post_Tag에 Post를 저장
+        for (Post_Tag post_tag : post_tagList) {
+            post_tag.setPost(post);
+            post_tagRepository.save(post_tag);
+        }
 
         return ResponseDto.success(
                 PostResponseDto.builder()
@@ -120,7 +131,9 @@ public class PostService {
                         .content(post.getContent())
                         .author(post.getMember().getNickname())
                         .imageUrl(post.getImage())
-                        .tags(post.getTags())
+                        .tags(post_tagRepository.findAllByPost(post).stream()
+                                .map(post_tag -> post_tag.getTag().getTagName())
+                                .toList())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .build()
@@ -139,7 +152,9 @@ public class PostService {
                             .id(post.getId())
                             .title(post.getTitle())
                             .author(post.getMember().getNickname())
-                            .tags(post.getTags())
+                            .tags(post_tagRepository.findAllByPost(post).stream()
+                                    .map(post_tag -> post_tag.getTag().getTagName())
+                                    .toList())
                             .createdAt(post.getCreatedAt())
                             .modifiedAt(post.getModifiedAt())
                             .build()
@@ -199,7 +214,6 @@ public class PostService {
                         .title(post.getTitle())
                         .content(post.getContent())
                         .imageUrl(post.getImage())
-                        .tags(post.getTags())
                         .author(post.getMember().getNickname())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())

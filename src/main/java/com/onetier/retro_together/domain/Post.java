@@ -32,9 +32,10 @@ public class Post extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "tag_id", nullable = true)
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Tag> tags;
+    //Tag와 Post의 관계
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Post_Tag> post_tagList;
+
 
     /**
      * Update
