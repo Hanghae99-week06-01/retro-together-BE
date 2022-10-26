@@ -1,13 +1,6 @@
-//buildscript {
-//    ext {
-//        queryDslVersion = "5.0.0"
-//    }
-//}
-
 plugins {
-    id 'org.springframework.boot' version '2.7.3'
-    id 'io.spring.dependency-management' version '1.0.13.RELEASE'
-   // id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'java'
 }
 
@@ -34,10 +27,6 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    //queryDslVersion
-//    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-//    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
     // JWT
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
@@ -69,23 +58,3 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-//queryDsl
-//def querydslDir = "$buildDir/generated/querydsl" as Object
-//
-//querydsl {
-//    jpa = true
-//    querydslSourcesDir = querydslDir
-//}
-//sourceSets {
-//    main.java.srcDir querydslDir
-//}
-//compileQuerydsl {
-//    options.annotationProcessorPath = configurations.querydsl
-//}
-//configurations {
-//    compileOnly {
-//        extendsFrom annotationProcessor
-//    }
-//    querydsl.extendsFrom compileClasspath
-//}
