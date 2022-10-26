@@ -21,4 +21,6 @@ public class ReplyResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+
+    private Long likeCount; // 좋아요 카운트 추가 2022-10-25
 }
