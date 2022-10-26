@@ -34,7 +34,7 @@ public class Post extends Timestamped {
 
     //Tag와 Post의 관계
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Post_Tag> post_tagList;
+    private List<PostTag> postTagList;
 
 
     /**

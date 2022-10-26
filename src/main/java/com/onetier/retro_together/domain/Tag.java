@@ -21,10 +21,12 @@ public class Tag {
     @Column(nullable = false)
     private String tagName;
 
-    //Post와 Tag의 관계는 다대다 관계이다.
-    //Post와 Tag의 관계를 관리하는 Post_Tag를 생성하여 다대다 관계를 일대다, 다대일 관계로 풀어낸다.
     @OneToMany(mappedBy = "tag")
-    private List<Post_Tag> post_tagList;
+    private List<PostTag> postTagList;
+
+    public Tag(String tag) {
+        this.tagName = tag;
+    }
 
     // get tag name
     public String getTagName() {

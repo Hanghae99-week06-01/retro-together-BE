@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Post_Tag {
+public class PostTag {
 
 
     @Id

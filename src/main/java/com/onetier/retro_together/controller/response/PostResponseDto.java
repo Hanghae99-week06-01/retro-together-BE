@@ -1,6 +1,4 @@
 package com.onetier.retro_together.controller.response;
-import com.onetier.retro_together.domain.Post_Tag;
-import com.onetier.retro_together.domain.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
