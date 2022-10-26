@@ -6,17 +6,30 @@ import com.onetier.retro_together.controller.response.*;
 import com.onetier.retro_together.domain.Comment;
 import com.onetier.retro_together.domain.Member;
 import com.onetier.retro_together.domain.Post;
+import com.onetier.retro_together.domain.PostTag;
+import com.onetier.retro_together.domain.Tag;
+import com.onetier.retro_together.domain.PostTag;
 import com.onetier.retro_together.jwt.TokenProvider;
+
 import com.onetier.retro_together.repository.*;
+
+import com.onetier.retro_together.repository.PostRepository;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 
 /**
  * PostService 수정함 2022- 10 - 23 오후 7시 34분
@@ -25,6 +38,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
     private final TokenProvider tokenProvider;
     private final S3UploaderService s3UploaderService; // S3Uploader 관련 추가 2022- 10 - 23 오후 7시 34분
 
@@ -39,6 +54,7 @@ public class PostService {
 
     /**
      * 게시글 등록
+     *
      * @param multipartFile
      * @param request
      * @return
@@ -68,19 +84,21 @@ public class PostService {
 
         // AWS 추가 2022-10-23 오후 8시 8분
         String FileName = null;
-
         if (multipartFile.isEmpty()) {
             return ResponseDto.fail("INVALID_FILE", "파일이 유효하지 않습니다.");
         }
-
         ImageResponseDto imageResponseDto = null;
-
         try {
             FileName = s3UploaderService.uploadFile(multipartFile, "image");
             imageResponseDto = new ImageResponseDto(FileName);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        List<Tag> inputTag = Arrays.stream(request.getParameter("tag").split(" ")).map( // 2022-10-23 오후 8시 8분
+                tag -> tagRepository.findByTagName(tag).orElseGet(() -> tagRepository.save(new Tag(tag)))
+        ).toList();
+
 
         assert imageResponseDto != null;
         Post post = Post.builder()
@@ -89,12 +107,11 @@ public class PostService {
                 .image(request.getParameter("imageUrl"))
                 .comment_cnt(0)        // 게시글 카운트 추가
               //  .image(imageResponseDto.getImageUrl())      // ImageUrl 추가
+                .postTagList(inputTag.stream().map(tag -> PostTag.builder().tag(tag).build()).collect(Collectors.toList()))
                 .member(member)
                 .build();
         postRepository.save(post);
 
-//        System.out.println(post.getComment_cnt()); // Comment_cnt 확인용
-//        System.out.println(post.getImage()); // Image 업로드 확인용
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .id(post.getId())
@@ -102,6 +119,7 @@ public class PostService {
                         .content(post.getContent())
                         .author(post.getMember().getNickname())
                         .imageUrl(post.getImage())
+                        .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .comment_cnt(post.getComment_cnt()) // comment_cnt (게시글 카운트 항목) 추가
@@ -203,6 +221,7 @@ public class PostService {
                             .author(post.getMember().getNickname())
                             .likeCount(postLikeRepository.countAllByPostId(post.getId())) // likeCount 추가
                             .comment_cnt(post.getComment_cnt()) // comment_cnt 추가
+                            .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                             .createdAt(post.getCreatedAt())
                             .modifiedAt(post.getModifiedAt())
                             .build()
@@ -262,6 +281,14 @@ public class PostService {
             }
         }
 
+        Arrays.stream(requestDto.getTags().split(" "))
+                .map(tag -> tagRepository.findByTagName(tag).orElseGet(() -> tagRepository.save(new Tag(tag))))
+                .forEach(tag -> {
+                    if (!post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).toList().contains(tag.getTagName())) {
+                        post.addPostTag(tag);
+                    }
+                });
+
         assert imageResponseDto != null;
         post.update(requestDto, imageResponseDto);
 
@@ -272,6 +299,7 @@ public class PostService {
                         .content(post.getContent())
                         .imageUrl(post.getImage())
                         .author(post.getMember().getNickname())
+                        .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .likeCount(postLikeRepository.countAllByPostId(post.getId())) // likeCount
@@ -320,9 +348,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public Post isPresentPost(Long id) {
         Optional<Post> optionalPost = postRepository.findById(id);
-
         return optionalPost.orElse(null);
-
     }
 
     // postService 수정 2022-10-23 오후 8시 19분
@@ -340,5 +366,5 @@ public class PostService {
         }
         return tokenProvider.getMemberFromAuthentication();
     }
-}
 
+}

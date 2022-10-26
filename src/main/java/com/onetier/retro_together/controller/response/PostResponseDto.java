@@ -19,6 +19,7 @@ public class PostResponseDto {
     private String content;
     private String title;
     private String imageUrl;
+    private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Integer comment_cnt; // 2022-10-24 오후 5시 29분 추가

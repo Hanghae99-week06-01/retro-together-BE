@@ -14,4 +14,5 @@ public class PostRequestDto {
     private String title;
     private String content;
     private String imageUrl;
+    private String tags;
 }

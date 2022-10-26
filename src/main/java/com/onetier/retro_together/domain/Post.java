@@ -1,12 +1,7 @@
 package com.onetier.retro_together.domain;
-
 import com.onetier.retro_together.controller.request.PostRequestDto;
 import com.onetier.retro_together.controller.response.ImageResponseDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
@@ -15,9 +10,9 @@ import java.util.List;
  */
 @Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Post extends Timestamped {
     // 대댓글 구현 중 다시 post 수정 2022-10-23 오후 6시 47분
     @Id
@@ -49,6 +44,12 @@ public class Post extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    //Tag와 Post의 관계
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<PostTag> postTagList;
+
+
+
     /**
      * Update
      *
@@ -62,9 +63,9 @@ public class Post extends Timestamped {
         this.image = imageResponseDto.getImageUrl();
     }
 
+
     /**
      * memeber 유효성 체크
-     *
      * @param member
      * @return
      * @author doosan
@@ -72,6 +73,15 @@ public class Post extends Timestamped {
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
     }
+
+    public void addPostTag(Tag tag) {
+        PostTag postTag = PostTag.builder()
+                .post(this)
+                .tag(tag)
+                .build();
+        postTagList.add(postTag);
+    }
+
 
     // comment_cnt_up 추가 오후 3시 14분
     // comment_cnt 타입을 Integer -> int로 변경 및 nullable false 삭제
