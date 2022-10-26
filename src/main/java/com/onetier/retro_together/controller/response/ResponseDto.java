@@ -1,5 +1,5 @@
 package com.onetier.retro_together.controller.response;
-import com.onetier.retro_together.domain.Error;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -23,4 +23,5 @@ public class PostResponseDto {
     private LocalDateTime modifiedAt;
     private Integer comment_cnt; // 2022-10-24 오후 5시 29분 추가
     private List<CommentResponseDto> comments; // 2022-10-24 오후 5시 29분 추가
+    private Long likeCount; // 2022-10-25 좋아요 카운트 추가
 }

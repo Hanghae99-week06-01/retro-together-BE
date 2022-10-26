@@ -1,23 +1,23 @@
 package com.onetier.retro_together.service;
 
+import com.onetier.retro_together.controller.request.CommentRequestDto;
+import com.onetier.retro_together.controller.response.CommentResponseDto;
 import com.onetier.retro_together.controller.response.ReplyResponseDto;
 import com.onetier.retro_together.controller.response.ResponseDto;
-import com.onetier.retro_together.controller.response.CommentResponseDto;
 import com.onetier.retro_together.domain.Comment;
 import com.onetier.retro_together.domain.Member;
 import com.onetier.retro_together.domain.Post;
-import com.onetier.retro_together.controller.request.CommentRequestDto;
 import com.onetier.retro_together.jwt.TokenProvider;
 import com.onetier.retro_together.repository.CommentRepository;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-
+import com.onetier.retro_together.repository.PostCommentLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 /**
  * CommentService 2022-10-24
  */
@@ -25,8 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final PostCommentLikeRepository postCommentLikeRepository;
     private final PostService postService;
     private final TokenProvider tokenProvider;
+
+    // PostCommentLikeRepository  추가  2022-10-25
 
     /**
      * 게시글 등록
@@ -74,6 +77,7 @@ public class CommentService {
                         .content(comment.getContent())
                         .createdAt(comment.getCreatedAt())
                         .modifiedAt(comment.getModifiedAt())
+                        .likeCount(comment.getLikeCount())
                         .build()
         );
     }
@@ -123,6 +127,7 @@ public class CommentService {
                         .content(reply.getContent())
                         .createdAt(reply.getCreatedAt())
                         .modifiedAt(reply.getModifiedAt())
+                        .likeCount(reply.getLikeCount())
                         .build()
         );
     }
@@ -146,6 +151,7 @@ public class CommentService {
                             .createdAt(comment.getCreatedAt())
                             .modifiedAt(comment.getModifiedAt())
                             .replies(replyListExtractor(post,comment))
+                            .likeCount(postCommentLikeRepository.countAllByCommentId(comment.getId()))
                             .build()
             );
         }
@@ -193,6 +199,7 @@ public class CommentService {
                         .createdAt(comment.getCreatedAt())
                         .modifiedAt(comment.getModifiedAt())
                         .replies(replyListExtractor(post, comment))
+                        .likeCount(postCommentLikeRepository.countAllByCommentId(comment.getId()))
                         .build()
         );
     }
