@@ -1,5 +1,5 @@
 package com.onetier.retro_together.controller.response;
-import com.onetier.retro_together.domain.Error;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,5 +16,12 @@ public class ResponseDto<T> {
 
   public static <T> ResponseDto<T> fail(String code, String message) {
     return new ResponseDto<>(false, null, new Error(code, message));
+  }
+  // 2022-10-24  오후 5시 31분 추가
+  @Getter
+  @AllArgsConstructor
+  static class Error {
+    private String code;
+    private String message;
   }
 }

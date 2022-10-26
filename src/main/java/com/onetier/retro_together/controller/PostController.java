@@ -18,16 +18,15 @@ public class PostController {
     private final PostService postService;
 
     /**
-     * 게시글 등록 , POST 요청
-     * @param requestDto
+     * 게시글 등록
      * @param multipartFile
      * @param request
      * @return
      * @author doosan
      */
     @RequestMapping(value="/api/auth/post", method = RequestMethod.POST)
-    public ResponseDto<?> createPost(@RequestPart PostRequestDto requestDto, @RequestPart MultipartFile multipartFile, HttpServletRequest request) {
-        return postService.createPost(requestDto, multipartFile, request);
+    public ResponseDto<?> createPost(@RequestParam(value="data",required = false) MultipartFile multipartFile, HttpServletRequest request) {
+        return postService.createPost(multipartFile, request);
     }
 
     /**

@@ -11,5 +11,4 @@ public class RetroTogetherApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(RetroTogetherApplication.class, args);
 	}
-
 }
