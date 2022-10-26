@@ -25,8 +25,20 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    // 좋아요 카운트 추가 2022-10-25
+    @Column
+    private Long likeCount;
+
+    // 게시글 좋아요 추가 2022-10-25
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLike> postLike;
+
     @Column
     private String image;
+
+    //2022- 10 -24 추가
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,6 +47,7 @@ public class Post extends Timestamped {
     //Tag와 Post의 관계
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostTag> postTagList;
+
 
 
     /**
@@ -49,6 +62,7 @@ public class Post extends Timestamped {
         this.content = postRequestDto.getContent();
         this.image = imageResponseDto.getImageUrl();
     }
+
 
     /**
      * memeber 유효성 체크
@@ -67,6 +81,26 @@ public class Post extends Timestamped {
                 .build();
         postTagList.add(postTag);
     }
+
+
+    // comment_cnt_up 추가 오후 3시 14분
+    // comment_cnt 타입을 Integer -> int로 변경 및 nullable false 삭제
+
+    @Builder.Default // warning: @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final. 오류 때문에 추가함 2022-10-25 오후 3시 47분
+    @Column(nullable = true)
+    private int comment_cnt = 0;
+
+    /**
+     * comment_cnt_up 추가 2022-10-24 오후 3시 12분
+     */
+    public void comment_cnt_Up() {
+        this.comment_cnt++;
+    }
+
+    /**
+     * comment_cnt_Down 추가 2022-10-24 오후 3시 15분
+     */
+    public void comment_cnt_Down() {
+        this.comment_cnt--;
+    }
 }
-
-

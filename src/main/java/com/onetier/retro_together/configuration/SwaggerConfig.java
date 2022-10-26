@@ -28,7 +28,7 @@ public class SwaggerConfig {
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.onetier.retro_togather")) // swagger
+                .apis(RequestHandlerSelectors.basePackage("com.onetier.retro_together")) // swagger
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
