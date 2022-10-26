@@ -36,6 +36,7 @@ public class SecurityConfiguration {
   private final UserDetailsServiceImpl userDetailsService;
   private final AuthenticationEntryPointException authenticationEntryPointException;
   private final AccessDeniedHandlerException accessDeniedHandlerException;
+  private final CorsConfig corsConfig;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -45,7 +46,6 @@ public class SecurityConfiguration {
   @Bean
   @Order(SecurityProperties.BASIC_AUTH_ORDER)
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.cors();
 
     http.csrf().disable()
 
@@ -74,6 +74,7 @@ public class SecurityConfiguration {
         .anyRequest().authenticated()
 
         .and()
+        .addFilter(corsConfig.corsFilter())
         .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));
 
     return http.build();
