@@ -179,6 +179,14 @@ public class PostService {
             }
         }
 
+        Arrays.stream(requestDto.getTags().split(" "))
+                .map(tag -> tagRepository.findByTagName(tag).orElseGet(() -> tagRepository.save(new Tag(tag))))
+                .forEach(tag -> {
+                    if (!post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).toList().contains(tag.getTagName())) {
+                        post.addPostTag(tag);
+                    }
+                });
+
         assert imageResponseDto != null;
         post.update(requestDto, imageResponseDto);
 
@@ -189,6 +197,7 @@ public class PostService {
                         .content(post.getContent())
                         .imageUrl(post.getImage())
                         .author(post.getMember().getNickname())
+                        .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .build()

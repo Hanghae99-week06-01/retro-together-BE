@@ -59,6 +59,14 @@ public class Post extends Timestamped {
     public boolean validateMember(Member member) {
         return !this.member.equals(member);
     }
+
+    public void addPostTag(Tag tag) {
+        PostTag postTag = PostTag.builder()
+                .post(this)
+                .tag(tag)
+                .build();
+        postTagList.add(postTag);
+    }
 }
 
 
