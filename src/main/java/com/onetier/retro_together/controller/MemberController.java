@@ -5,6 +5,7 @@ import com.onetier.retro_together.controller.request.MemberRequestDto;
 import com.onetier.retro_together.controller.response.ResponseDto;
 import com.onetier.retro_together.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,5 +54,10 @@ public class MemberController {
     @PostMapping(value = "/api/auth/member/logout")
     public ResponseDto<?> logout(HttpServletRequest request) {
         return memberService.logout(request);
+    }
+
+    @Transactional
+    public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+        return memberService.reissue(request, response);
     }
 }

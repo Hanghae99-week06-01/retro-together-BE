@@ -8,6 +8,7 @@ import com.onetier.retro_together.controller.response.ResponseDto;
 import com.onetier.retro_together.domain.Member;
 import com.onetier.retro_together.jwt.TokenProvider;
 import com.onetier.retro_together.repository.MemberRepository;
+import com.onetier.retro_together.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /**
      * 유효성검사
@@ -123,5 +125,29 @@ public class MemberService {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
         response.addHeader("Refresh-Token", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+    }
+
+    /**
+     * 토큰 재발급
+     * @param request
+     * @param response
+     * @author Puri12
+     */
+    public ResponseDto<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+        if(!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Member member = refreshTokenRepository.findByValue(request.getHeader("Refresh-Token")).get().getMember();
+        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+        tokenToHeaders(tokenDto, response);
+        return ResponseDto.success(
+                MemberResponseDto.builder()
+                        .id(member.getId())
+                        .nickname(member.getNickname())
+                        .createdAt(member.getCreatedAt())
+                        .modifiedAt(member.getModifiedAt())
+                        .build()
+        );
     }
 }
