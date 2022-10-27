@@ -55,13 +55,13 @@ public class PostService {
     /**
      * 게시글 등록
      *
-     * @param multipartFile
+     * @param postRequestDto
      * @param request
      * @return
      * @author doosan
      */
     @Transactional
-    public ResponseDto<?> createPost(MultipartFile multipartFile, HttpServletRequest request) {
+    public ResponseDto<?> createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
 
         /** Refresh-Token 유효성 검사 */
         if (null == request.getHeader("Refresh-Token")) {
@@ -82,29 +82,29 @@ public class PostService {
         }
 
 
-        // AWS 추가 2022-10-23 오후 8시 8분
-        String FileName = null;
-        if (multipartFile.isEmpty()) {
-            return ResponseDto.fail("INVALID_FILE", "파일이 유효하지 않습니다.");
-        }
-        ImageResponseDto imageResponseDto = null;
-        try {
-            FileName = s3UploaderService.uploadFile(multipartFile, "image");
-            imageResponseDto = new ImageResponseDto(FileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        // AWS 추가 2022-10-23 오후 8시 8분
+//        String FileName = null;
+//        if (multipartFile.isEmpty()) {
+//            return ResponseDto.fail("INVALID_FILE", "파일이 유효하지 않습니다.");
+//        }
+//        ImageResponseDto imageResponseDto = null;
+//        try {
+//            FileName = s3UploaderService.uploadFile(multipartFile, "image");
+//            imageResponseDto = new ImageResponseDto(FileName);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
-        List<Tag> inputTag = Arrays.stream(request.getParameter("tag").split(" ")).map( // 2022-10-23 오후 8시 8분
+        List<Tag> inputTag = Arrays.stream(postRequestDto.getTags().split(" ")).map( // 2022-10-23 오후 8시 8분
                 tag -> tagRepository.findByTagName(tag).orElseGet(() -> tagRepository.save(new Tag(tag)))
         ).toList();
 
 
-        assert imageResponseDto != null;
+//        assert imageResponseDto != null;
         Post post = Post.builder()
-                .title(request.getParameter("title"))
-                .content(request.getParameter("content"))
-                .image(request.getParameter("imageUrl"))
+                .title(postRequestDto.getTitle())
+                .content(postRequestDto.getContent())
+                .image(postRequestDto.getImageUrl())
                 .comment_cnt(0)        // 게시글 카운트 추가
               //  .image(imageResponseDto.getImageUrl())      // ImageUrl 추가
                 .postTagList(inputTag.stream().map(tag -> PostTag.builder().tag(tag).build()).collect(Collectors.toList()))
