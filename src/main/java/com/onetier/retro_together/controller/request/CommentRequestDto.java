@@ -1,18 +1,16 @@
 package com.onetier.retro_together.controller.request;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * PostRequestDto 2022-10-23 오후 7시 10분 imageUrl 추가
+ * CommentRequestDto 2022-10-24 오후 1시 56분 추가 parentId 추가
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequestDto {
-    private String title;
+public class CommentRequestDto {
+    private Long postId;
+    private Long parentId;
     private String content;
-    private String imageUrl;
-    private String tags;
 }

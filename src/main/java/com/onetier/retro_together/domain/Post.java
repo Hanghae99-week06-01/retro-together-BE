@@ -1,28 +1,23 @@
 package com.onetier.retro_together.domain;
-
 import com.onetier.retro_together.controller.request.PostRequestDto;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+import com.onetier.retro_together.controller.response.ImageResponseDto;
+import lombok.*;
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.List;
 
-@NoArgsConstructor // 기본 생성자를 만듭니다.
+/**
+ * Post
+ */
+@Builder
 @Getter
-@Entity // 테이블과 연계됨을 스프링에게 알려줍니다.
-@EntityListeners(AuditingEntityListener.class) // 생성/변경 시간을 자동으로 업데이트합니다.
-/* @MappedSuperclass // Entity가 자동으로 컬럼으로 인식합니다. 물어보기(이 어노테이션은 객체의
-  입장에서 공통 매핑 정보가 필요할 때 사용한다. 생성시간과 수정시간에 보통쓰이는것 같은데 어떻게 해야할까*/
-public class Post {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+public class Post extends Timestamped {
+    // 대댓글 구현 중 다시 post 수정 2022-10-23 오후 6시 47분
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String postId;
 
     @Column(nullable = false)
     private String title;
@@ -30,38 +25,82 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    // 좋아요 카운트 추가 2022-10-25
+    @Column
+    private Long likeCount;
 
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    // 게시글 좋아요 추가 2022-10-25
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLike> postLike;
 
-    @Column(nullable = false)
-    private int postCount;
+    @Column
+    private String image;
 
-    @Id
-    private Long author;
+    //2022- 10 -24 추가
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
-    @Id
-    private Long comment;
+    @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
-    @Id
-    private Long tag;
+    //Tag와 Post의 관계
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<PostTag> postTagList;
 
-    @Id
-    private Long file;
 
-    public Post(PostRequestDto requestDto) {
-        this.postId = requestDto.getPostId();
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
-        this.postCount = requestDto.getPostCount();
+
+    /**
+     * Update
+     *
+     * @param postRequestDto
+     * @param imageResponseDto
+     * @author doosan
+     */
+    public void update(PostRequestDto postRequestDto, ImageResponseDto imageResponseDto) {
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+        this.image = imageResponseDto.getImageUrl();
     }
 
-    public void update(PostRequestDto requestDto) {
-        this.postId = requestDto.getPostId();
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
-        this.postCount = requestDto.getPostCount();
+
+    /**
+     * memeber 유효성 체크
+     * @param member
+     * @return
+     * @author doosan
+     */
+    public boolean validateMember(Member member) {
+        return !this.member.equals(member);
+    }
+
+    public void addPostTag(Tag tag) {
+        PostTag postTag = PostTag.builder()
+                .post(this)
+                .tag(tag)
+                .build();
+        postTagList.add(postTag);
+    }
+
+
+    // comment_cnt_up 추가 오후 3시 14분
+    // comment_cnt 타입을 Integer -> int로 변경 및 nullable false 삭제
+
+    @Builder.Default // warning: @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final. 오류 때문에 추가함 2022-10-25 오후 3시 47분
+    @Column(nullable = true)
+    private int comment_cnt = 0;
+
+    /**
+     * comment_cnt_up 추가 2022-10-24 오후 3시 12분
+     */
+    public void comment_cnt_Up() {
+        this.comment_cnt++;
+    }
+
+    /**
+     * comment_cnt_Down 추가 2022-10-24 오후 3시 15분
+     */
+    public void comment_cnt_Down() {
+        this.comment_cnt--;
     }
 }

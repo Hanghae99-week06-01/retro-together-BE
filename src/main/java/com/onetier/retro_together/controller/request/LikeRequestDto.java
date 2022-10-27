@@ -5,14 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * PostRequestDto 2022-10-23 오후 7시 10분 imageUrl 추가
+ * LikeRequestDto 추가 2022-10-25
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequestDto {
-    private String title;
-    private String content;
-    private String imageUrl;
-    private String tags;
+public class LikeRequestDto {
+    private Long id;
+
 }

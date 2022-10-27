@@ -2,9 +2,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches:
-      - main
-      - dev
+    branches: [ "dev" ]
+#   pull_request:
+#     branches: [ "dev" ]
 
 permissions:
   contents: read
@@ -22,7 +22,6 @@ jobs:
         ## 1) git ignore에 등록된 application.properties 파일 생성해주기
       - name: make ENV
         run: |
-          mkdir ./src/main/resources
           cd ./src/main/resources
           touch ./application.properties
           echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./application.properties
@@ -51,7 +50,7 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ec2-3-34-125-45.ap-northeast-2.compute.amazonaws.com
+          host: ${{ secrets.AWS_HOST_ADDRESS }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: GITHUB_SHA

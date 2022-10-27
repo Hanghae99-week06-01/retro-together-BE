@@ -4,15 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 /**
- * PostRequestDto 2022-10-23 오후 7시 10분 imageUrl 추가
+ * LoginRequestDto
  */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostRequestDto {
-    private String title;
-    private String content;
-    private String imageUrl;
-    private String tags;
+public class LoginRequestDto {
+
+    @NotBlank
+    private String emailId;
+
+    @NotBlank
+    private String password;
+
 }
