@@ -19,6 +19,7 @@ public class PostResponseDto {
     private String content;
     private String title;
     private String imageUrl;
+    private String category;
     private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

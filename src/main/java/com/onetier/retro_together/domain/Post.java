@@ -48,6 +48,9 @@ public class Post extends Timestamped {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<PostTag> postTagList;
 
+    @Convert(converter = CategoryConverter.class)
+    private PostCategory category;
+
 
 
     /**
