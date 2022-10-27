@@ -3,11 +3,7 @@ package com.onetier.retro_together.service;
 
 import com.onetier.retro_together.controller.request.PostRequestDto;
 import com.onetier.retro_together.controller.response.*;
-import com.onetier.retro_together.domain.Comment;
-import com.onetier.retro_together.domain.Member;
-import com.onetier.retro_together.domain.Post;
-import com.onetier.retro_together.domain.PostTag;
-import com.onetier.retro_together.domain.Tag;
+import com.onetier.retro_together.domain.*;
 import com.onetier.retro_together.domain.PostTag;
 import com.onetier.retro_together.jwt.TokenProvider;
 
@@ -97,7 +93,7 @@ public class PostService {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-//
+
         List<Tag> inputTag = Arrays.stream(request.getParameter("tag").split(" ")).map( // 2022-10-23 오후 8시 8분
                 tag -> tagRepository.findByTagName(tag).orElseGet(() -> tagRepository.save(new Tag(tag)))
         ).toList();
@@ -108,6 +104,7 @@ public class PostService {
                 .title(request.getParameter("title"))
                 .content(request.getParameter("content"))
                 .image(request.getParameter("imageUrl"))
+                .category(PostCategory.fromCode(request.getParameter("category")))
                 .comment_cnt(0)        // 게시글 카운트 추가
               //  .image(imageResponseDto.getImageUrl())      // ImageUrl 추가
                 .postTagList(inputTag.stream().map(tag -> PostTag.builder().tag(tag).build()).collect(Collectors.toList()))
@@ -126,6 +123,7 @@ public class PostService {
                         .content(post.getContent())
                         .author(post.getMember().getNickname())
                         .imageUrl(post.getImage())
+                        .category(post.getCategory().getValue())
                         .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
@@ -305,6 +303,7 @@ public class PostService {
                         .title(post.getTitle())
                         .content(post.getContent())
                         .imageUrl(post.getImage())
+                        .category(post.getCategory().getValue())
                         .author(post.getMember().getNickname())
                         .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
