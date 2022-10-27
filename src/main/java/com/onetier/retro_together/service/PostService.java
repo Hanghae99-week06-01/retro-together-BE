@@ -10,6 +10,7 @@ import com.onetier.retro_together.jwt.TokenProvider;
 import com.onetier.retro_together.repository.*;
 
 import com.onetier.retro_together.repository.PostRepository;
+import com.onetier.retro_together.util.ClientUtil;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -47,6 +48,8 @@ public class PostService {
 
     private final PostCommentLikeRepository postCommentLikeRepository;
 
+    private final ClientUtil clientUtil;
+
 
     /**
      * 게시글 등록
@@ -57,7 +60,7 @@ public class PostService {
      * @author doosan
      */
     @Transactional
-    public ResponseDto<?> createPost(MultipartFile multipartFile, HttpServletRequest request) {
+    public ResponseDto<?> createPost(MultipartFile multipartFile, HttpServletRequest request) throws Exception {
 
         /** Refresh-Token 유효성 검사 */
         if (null == request.getHeader("Refresh-Token")) {
@@ -108,6 +111,10 @@ public class PostService {
                 .member(member)
                 .build();
         postRepository.save(post);
+        clientUtil.requestgit(post.getTitle(), post.getContent());
+
+
+
 
         return ResponseDto.success(
                 PostResponseDto.builder()
