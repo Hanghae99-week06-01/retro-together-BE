@@ -60,7 +60,7 @@ public class PostService {
      * @author doosan
      */
     @Transactional
-    public ResponseDto<?> createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
+    public ResponseDto<?> createPost(PostRequestDto postRequestDto, HttpServletRequest request) throws Exception {
 
         /** Refresh-Token 유효성 검사 */
         if (null == request.getHeader("Refresh-Token")) {
