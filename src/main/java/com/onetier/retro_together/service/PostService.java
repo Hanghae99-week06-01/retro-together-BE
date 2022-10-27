@@ -104,6 +104,7 @@ public class PostService {
                 .title(postRequestDto.getTitle())
                 .content(postRequestDto.getContent())
                 .image(postRequestDto.getImageUrl())
+                .category(PostCategory.fromCode(postRequestDto.getCategory()))
                 .comment_cnt(0)        // 게시글 카운트 추가
               //  .image(imageResponseDto.getImageUrl())      // ImageUrl 추가
                 .postTagList(inputTag.stream().map(tag -> PostTag.builder().tag(tag).build()).collect(Collectors.toList()))
