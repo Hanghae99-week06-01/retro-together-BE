@@ -25,7 +25,7 @@ public class PostController {
      * @author doosan
      */
     @RequestMapping(value="/api/auth/post", method = RequestMethod.POST)
-    public ResponseDto<?> createPost(@RequestParam(value="data",required = false) MultipartFile multipartFile, HttpServletRequest request) {
+    public ResponseDto<?> createPost(@RequestParam(value="data",required = false) MultipartFile multipartFile, HttpServletRequest request) throws Exception {
         return postService.createPost(multipartFile, request);
     }
 

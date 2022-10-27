@@ -14,6 +14,7 @@ import com.onetier.retro_together.jwt.TokenProvider;
 import com.onetier.retro_together.repository.*;
 
 import com.onetier.retro_together.repository.PostRepository;
+import com.onetier.retro_together.util.ClientUtil;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -51,6 +52,8 @@ public class PostService {
 
     private final PostCommentLikeRepository postCommentLikeRepository;
 
+    private final ClientUtil clientUtil;
+
 
     /**
      * 게시글 등록
@@ -61,7 +64,7 @@ public class PostService {
      * @author doosan
      */
     @Transactional
-    public ResponseDto<?> createPost(MultipartFile multipartFile, HttpServletRequest request) {
+    public ResponseDto<?> createPost(MultipartFile multipartFile, HttpServletRequest request) throws Exception {
 
         /** Refresh-Token 유효성 검사 */
         if (null == request.getHeader("Refresh-Token")) {
@@ -83,24 +86,24 @@ public class PostService {
 
 
         // AWS 추가 2022-10-23 오후 8시 8분
-        String FileName = null;
-        if (multipartFile.isEmpty()) {
-            return ResponseDto.fail("INVALID_FILE", "파일이 유효하지 않습니다.");
-        }
-        ImageResponseDto imageResponseDto = null;
-        try {
-            FileName = s3UploaderService.uploadFile(multipartFile, "image");
-            imageResponseDto = new ImageResponseDto(FileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+//        String FileName = null;
+//        if (multipartFile.isEmpty()) {
+//            return ResponseDto.fail("INVALID_FILE", "파일이 유효하지 않습니다.");
+//        }
+//        ImageResponseDto imageResponseDto = null;
+//        try {
+//            FileName = s3UploaderService.uploadFile(multipartFile, "image");
+//            imageResponseDto = new ImageResponseDto(FileName);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
         List<Tag> inputTag = Arrays.stream(request.getParameter("tag").split(" ")).map( // 2022-10-23 오후 8시 8분
                 tag -> tagRepository.findByTagName(tag).orElseGet(() -> tagRepository.save(new Tag(tag)))
         ).toList();
 
 
-        assert imageResponseDto != null;
+//        assert imageResponseDto != null;
         Post post = Post.builder()
                 .title(request.getParameter("title"))
                 .content(request.getParameter("content"))
@@ -111,6 +114,10 @@ public class PostService {
                 .member(member)
                 .build();
         postRepository.save(post);
+        clientUtil.requestgit(post.getTitle(), post.getContent());
+
+
+
 
         return ResponseDto.success(
                 PostResponseDto.builder()
