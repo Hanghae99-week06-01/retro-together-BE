@@ -3,17 +3,14 @@ package com.onetier.retro_together.service;
 
 import com.onetier.retro_together.controller.request.PostRequestDto;
 import com.onetier.retro_together.controller.response.*;
-import com.onetier.retro_together.domain.Comment;
-import com.onetier.retro_together.domain.Member;
-import com.onetier.retro_together.domain.Post;
-import com.onetier.retro_together.domain.PostTag;
-import com.onetier.retro_together.domain.Tag;
+import com.onetier.retro_together.domain.*;
 import com.onetier.retro_together.domain.PostTag;
 import com.onetier.retro_together.jwt.TokenProvider;
 
 import com.onetier.retro_together.repository.*;
 
 import com.onetier.retro_together.repository.PostRepository;
+import com.onetier.retro_together.util.ClientUtil;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -50,6 +47,8 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
 
     private final PostCommentLikeRepository postCommentLikeRepository;
+
+    private final ClientUtil clientUtil;
 
 
     /**
@@ -111,6 +110,10 @@ public class PostService {
                 .member(member)
                 .build();
         postRepository.save(post);
+        clientUtil.requestgit(post.getTitle(), post.getContent());
+
+
+
 
         return ResponseDto.success(
                 PostResponseDto.builder()
@@ -119,6 +122,7 @@ public class PostService {
                         .content(post.getContent())
                         .author(post.getMember().getNickname())
                         .imageUrl(post.getImage())
+                        .category(post.getCategory().getValue())
                         .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
@@ -298,6 +302,7 @@ public class PostService {
                         .title(post.getTitle())
                         .content(post.getContent())
                         .imageUrl(post.getImage())
+                        .category(post.getCategory().getValue())
                         .author(post.getMember().getNickname())
                         .tags(post.getPostTagList().stream().map(postTag -> postTag.getTag().getTagName()).collect(Collectors.toList()))
                         .createdAt(post.getCreatedAt())
